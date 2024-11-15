@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yoayedde <yoayedde@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024-11-12 09:11:48 by yoayedde          #+#    #+#             */
-/*   Updated: 2024-11-12 09:11:48 by yoayedde         ###   ########.fr       */
+/*   Created: 2024-11-15 10:38:37 by yoayedde          #+#    #+#             */
+/*   Updated: 2024-11-15 10:38:37 by yoayedde         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
 #ifndef BUFFER_SIZE
 # define BUFFER_SIZE 10
@@ -20,6 +20,7 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
+# include <limits.h>
 # include <fcntl.h>
 # include <stdio.h>
 # include <string.h>

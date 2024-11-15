@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yoayedde <yoayedde@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024-11-12 09:11:46 by yoayedde          #+#    #+#             */
-/*   Updated: 2024-11-12 09:11:46 by yoayedde         ###   ########.fr       */
+/*   Created: 2024-11-15 10:38:21 by yoayedde          #+#    #+#             */
+/*   Updated: 2024-11-15 10:38:21 by yoayedde         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char *get_next_line(int fd)
 {
-    static char *stash;
+    static char *stash[OPEN_MAX];
     char        *buffer;
     char *line = NULL;
     int bytesread;
@@ -26,16 +26,14 @@ char *get_next_line(int fd)
         if (!buffer)
             return (NULL);
         bytesread = read(fd, buffer, BUFFER_SIZE);
-        buffer[bytesread] = '\0';
-        //printf("buffer->%s\n", buffer);
+        buffer[BUFFER_SIZE] = '\0';
         if (bytesread == -1)
             return (free(buffer), NULL);
         if (bytesread == 0)
         {
-            if (stash)
-            {
-                line = stash;
-                stash = (NULL);
+            if (stash[fd]){
+                line = stash[fd];
+                stash[fd] = (NULL);
             }
             return (free(buffer), line);
         }
@@ -43,15 +41,13 @@ char *get_next_line(int fd)
         {
             if (check(buffer))
             {
-                stash = joint(stash, fucknewlines(buffer));
-                line = stash;
-                stash = leftovers(buffer);
+                stash[fd] = joint(stash[fd], fucknewlines(buffer));
+                line = stash[fd];
+                stash[fd] = leftovers(buffer);
                 j = 1;
             }
             else
-                stash = joint(stash, buffer);
-            if (check(stash))
-                stash = leftovers(stash);
+                stash[fd] = joint(stash[fd], buffer);
         }
         buffer = (NULL);
         free(buffer);
@@ -61,12 +57,19 @@ char *get_next_line(int fd)
     return (line);
 }
 
-int main()
-{
-	int a = open("test.txt", O_RDWR);
-	int b = open("test1.txt", O_RDWR);
-	int c = open("test2.txt", O_RDWR);
-	int d = open("test3.txt", O_RDWR);
-	for (int i = 0; i < 10; i++)
-	    printf("%dLINE:->%s\n",i + 1, get_next_line(a));
-}
+// int main()
+// {
+// 	int a = open("test.txt", O_RDWR);
+// 	int b = open("test1.txt", O_RDWR);
+// 	int c = open("test2.txt", O_RDWR);
+// 	int d = open("test3.txt", O_RDWR);
+// 	printf("%s ", get_next_line(a));
+//     printf("%s ", get_next_line(b));
+//     printf("%s ", get_next_line(c));
+//     printf("%s ", get_next_line(d));
+//     printf("%s ", get_next_line(a));
+//     printf("%s ", get_next_line(b));
+//     printf("%s ", get_next_line(c));
+//     printf("%s ", get_next_line(d));
+//     printf("%s\n", get_next_line(d));
+// }

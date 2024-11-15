@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yoayedde <yoayedde@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024-11-12 09:11:39 by yoayedde          #+#    #+#             */
-/*   Updated: 2024-11-12 09:11:39 by yoayedde         ###   ########.fr       */
+/*   Created: 2024-11-15 10:39:16 by yoayedde          #+#    #+#             */
+/*   Updated: 2024-11-15 10:39:16 by yoayedde         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlen(char *s)
 {
@@ -29,7 +29,7 @@ int check(char *str)
     i = 0;
     while (i < BUFFER_SIZE)
     {
-        if (str[i] == '\n')
+        if (str[i] == '\n' || str[i] == '\0')
             return (1);
         i++;
     }
@@ -61,7 +61,7 @@ char *joint(char *s1, char *s2)
     str[i + j] = '\0';
     s1 = (NULL);
     free(s1);
-    printf("joint str->%s\n", str);
+    //printf("joint->%s\n", str);
     return (str);
 }
 
@@ -81,7 +81,7 @@ char *fucknewlines(char *str)
     while (++j < i)
         s[j] = str[j];
     s[j] = '\0';
-    printf("before /n->%s\n", s);
+    //printf("before/N->%s\n", s);
     return (s);
 }
 
@@ -99,15 +99,15 @@ char *leftovers(char *str)
         i++;
     if (str[i] == '\0')
         return (NULL);
-    i++;
     while (str[i + len])
         len++;
     s = malloc(len + 1);
     if (!s)
         return (NULL);
+    i++;
     while (++j < len)
         s[j] = str[i + j];
     s[j] = '\0';
-    printf("after /n->%s\n", s);
+    //printf("after/N->%s\n", s);
     return (s);
 }
