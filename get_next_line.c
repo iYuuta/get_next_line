@@ -12,61 +12,98 @@
 
 #include "get_next_line.h"
 
-char *get_next_line(int fd)
+
+int f_illiteracy(int fd, char **line, char *buffer, char **stash)
+{
+    int bytesread;
+
+    bytesread = read(fd, buffer, BUFFER_SIZE);
+    if (bytesread < 0)
+        return (-1);
+    if (bytesread == 0)
+    {
+        if (*stash && **stash)
+        {
+            *line = joint(*line, *stash);
+            *stash = NULL;
+        }
+        return (0);
+    }
+    buffer[bytesread] = '\0';
+    return (bytesread);
+}
+char *idkwhatthefuckimdoing(char **stash, char **line, char *buffer)
+{
+    char *temp;
+
+    temp = *stash;
+    if (*stash && check(*stash))
+    {
+        *line = fucknewlines(*stash);
+        *stash = leftovers(*stash);
+        free(temp);
+        free(buffer);
+        return (*line);
+    }
+    if (check(buffer))
+    {
+        *line = joint(*stash, fucknewlines(buffer));
+        *stash = leftovers(buffer);
+        free(buffer);
+        return (*line);
+    }
+    free(buffer);
+    return (NULL);
+}
+char *fillstash(int fd, char *line)
 {
     static char *stash;
-    char        *buffer;
-    char *line = NULL;
     int bytesread;
-    int         i = 0;
-    int         j = 0;
+    char *buffer;
+
+    buffer = malloc(BUFFER_SIZE + 1);
+    if (!buffer)
+        return (NULL);
     while (1)
     {
-        buffer = malloc(BUFFER_SIZE + 1);
-        if (!buffer)
-            return (NULL);
-        bytesread = read(fd, buffer, BUFFER_SIZE);
-        buffer[bytesread] = '\0';
-        //printf("buffer->%s\n", buffer);
+        if (stash && check(stash))
+            return(idkwhatthefuckimdoing(&stash, &line, buffer));
+        bytesread = f_illiteracy(fd, &line, buffer, &stash);
         if (bytesread == -1)
             return (free(buffer), NULL);
         if (bytesread == 0)
-        {
-            if (stash)
-            {
-                line = stash;
-                stash = (NULL);
-            }
             return (free(buffer), line);
-        }
-        else
-        {
-            if (check(buffer))
-            {
-                stash = joint(stash, fucknewlines(buffer));
-                line = stash;
-                stash = leftovers(buffer);
-                j = 1;
-            }
-            else
-                stash = joint(stash, buffer);
-            if (check(stash))
-                stash = leftovers(stash);
-        }
-        buffer = (NULL);
-        free(buffer);
-        if (j == 1)
-            break;
+        if (check(buffer))
+            return(idkwhatthefuckimdoing(&stash, &line, buffer));
+        stash = joint(stash, buffer);
     }
+    free(buffer);
+    buffer = NULL;
     return (line);
 }
 
-int main()
+char *get_next_line(int fd)
 {
-	int a = open("test.txt", O_RDWR);
-	int b = open("test1.txt", O_RDWR);
-	int c = open("test2.txt", O_RDWR);
-	int d = open("test3.txt", O_RDWR);
-	for (int i = 0; i < 10; i++)
-	    printf("%dLINE:->%s\n",i + 1, get_next_line(a));
+    char *line = NULL;
+
+    if (fd < 0 || BUFFER_SIZE <= 0 || fd > OPEN_MAX)
+        return (NULL);
+    line = fillstash(fd, line);
+    return (line);
 }
+// void f()
+// {
+//     system("leaks a.out");
+// }
+// int main()
+// {
+//     //atexit(f);
+//     int a = open("test.txt", O_RDWR);
+    
+//     char *s;
+//     while ((s = get_next_line(a)))
+//     {
+//         printf("->%s" , s);
+//         free(s);
+//     }
+// }

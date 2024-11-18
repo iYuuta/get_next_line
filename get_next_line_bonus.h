@@ -30,5 +30,6 @@ char *leftovers(char *str);
 char *fucknewlines(char *str);
 char *joint(char *s1, char *s2);
 int check(char *str);
+char *get_next_line_bonus(int fd);
 
 #endif

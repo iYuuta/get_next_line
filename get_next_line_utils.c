@@ -27,7 +27,7 @@ int check(char *str)
     int i;
 
     i = 0;
-    while (i < BUFFER_SIZE)
+    while (str[i])
     {
         if (str[i] == '\n')
             return (1);
@@ -59,9 +59,7 @@ char *joint(char *s1, char *s2)
     while (++j < s2len)
         str[i + j] = s2[j];
     str[i + j] = '\0';
-    s1 = (NULL);
     free(s1);
-    printf("joint str->%s\n", str);
     return (str);
 }
 
@@ -75,13 +73,12 @@ char *fucknewlines(char *str)
     j = -1;
     while (str[i] != '\n' && str[i] != '\0')
         i++;
-    s = malloc(i + 1);
+    s = malloc(i + 2);
     if (!s)
         return (NULL);
-    while (++j < i)
+    while (++j < i + 1)
         s[j] = str[j];
     s[j] = '\0';
-    printf("before /n->%s\n", s);
     return (s);
 }
 
@@ -108,6 +105,5 @@ char *leftovers(char *str)
     while (++j < len)
         s[j] = str[i + j];
     s[j] = '\0';
-    printf("after /n->%s\n", s);
     return (s);
 }

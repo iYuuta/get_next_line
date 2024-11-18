@@ -17,13 +17,19 @@
 # define BUFFER_SIZE 10
 #endif
 
+
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <fcntl.h>
 # include <stdio.h>
+# include <limits.h>
 # include <string.h>
 
+int f_illiteracy(int fd, char **line, char *buffer, char **stash);
+char *idkwhatthefuckimdoing(char **stash, char **line, char *buffer);
+char *fillstash(int fd, char *line);
+char *get_next_line(int fd);
 size_t	ft_strlen(char *s);
 char *leftovers(char *str);
 char *fucknewlines(char *str);
