@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: yoayedde <yoayedde@student.42.fr>          #+#  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024-11-15 10:38:37 by yoayedde          #+#    #+#             */
-/*   Updated: 2024-11-15 10:38:37 by yoayedde         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef GET_NEXT_LINE_BONUS_H
 # define GET_NEXT_LINE_BONUS_H
 
@@ -22,14 +10,12 @@
 # include <stdlib.h>
 # include <limits.h>
 # include <fcntl.h>
-# include <stdio.h>
 # include <string.h>
 
-size_t	ft_strlen(char *s);
-char *leftovers(char *str);
-char *fucknewlines(char *str);
-char *joint(char *s1, char *s2);
+char *duplicate(char *str);
+void *free_em(char **ptr1, char **ptr2);
+int ft_strlen(char *str);
 int check(char *str);
-char *get_next_line_bonus(int fd);
+char    *get_next_line(int fd);
 
 #endif

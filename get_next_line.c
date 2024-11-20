@@ -1,94 +1,113 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: yoayedde <yoayedde@student.42.fr>          #+#  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024-11-12 09:11:46 by yoayedde          #+#    #+#             */
-/*   Updated: 2024-11-12 09:11:46 by yoayedde         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "get_next_line.h"
 
 
-int f_illiteracy(int fd, char **line, char *buffer, char **stash)
+void    joint(char **old, char *new, char *buffer)
 {
-    int bytesread;
+    int    i;
+    int    j;
 
-    bytesread = read(fd, buffer, BUFFER_SIZE);
-    if (bytesread < 0)
-        return (-1);
-    if (bytesread == 0)
-    {
-        if (*stash && **stash)
-        {
-            *line = joint(*line, *stash);
-            *stash = NULL;
-        }
-        return (0);
-    }
-    buffer[bytesread] = '\0';
-    return (bytesread);
+    j = -1;
+    i = -1;
+    while ((*old)[++i] != '\0')
+        new[i] = (*old)[i];
+    while (buffer[++j] != '\0')
+        new[i + j] = buffer[j];
+    new[i + j] = '\0';
 }
-char *idkwhatthefuckimdoing(char **stash, char **line, char *buffer)
-{
-    char *temp;
 
-    temp = *stash;
-    if (*stash && check(*stash))
+void leftovers(char **stash, int index, char **line)
+{
+    char    *new;
+
+    new = NULL;
+    new = duplicate((*stash) + index);
+    if (!new)
     {
-        *line = fucknewlines(*stash);
-        *stash = leftovers(*stash);
-        free(temp);
-        free(buffer);
-        return (*line);
+        free_em(line, stash);
+        return ;
     }
-    if (check(buffer))
+    free_em(stash, NULL);
+    *stash = new;
+}
+
+void *fill_stash(char **stash, char *buffer)
+{
+    char *new;
+    int len;
+
+    new = NULL;
+    len = 0;
+    if (!(*stash))
     {
-        *line = joint(*stash, fucknewlines(buffer));
-        *stash = leftovers(buffer);
-        free(buffer);
-        return (*line);
+        *stash = duplicate(buffer);
+        if (!*stash)
+            return (free_em(&buffer, NULL));
+        return (NULL);
     }
-    free(buffer);
+    len = ft_strlen((*stash));
+    new = malloc(len + ft_strlen(buffer) + 1);
+    if (!new)
+        return (free_em(&buffer, stash));
+    joint(stash, new, buffer);
+    free_em(stash, NULL);
+    (*stash) = new;
     return (NULL);
 }
-char *fillstash(int fd, char *line)
-{
-    static char *stash;
-    int bytesread;
-    char *buffer;
 
+char    *fill_line(char **stash, char **line, char **buffer)
+{
+    size_t    i;
+    size_t    size;
+    size_t    check;
+
+    check = 0;
+    free_em(buffer, NULL);
+    if (*stash == NULL || **stash == '\0')
+        return (free_em(stash, NULL));
+    size = 0;
+    i = 0;
+    while ((*stash)[size] != '\0' && (*stash)[size] != '\n')
+        size++;
+    if ((*stash)[size] == '\n')
+        check = 1;
+    (*line) = malloc(sizeof(char) * (size + check + 1));
+    if (!(*line))
+        return (free_em(stash, NULL));
+    while (i < size + check)
+    {
+        (*line)[i] = (*stash)[i];
+        i++;
+    }
+    (*line)[i] = '\0';
+    leftovers(stash, size + check, line);
+    return (NULL);
+}
+
+char    *get_next_line(int fd)
+{
+    char        *line;
+    static char    *stash;    
+    char        *buffer;
+    ssize_t        bytesread;
+
+    if (BUFFER_SIZE <= 0 || fd < 0 || read(fd, 0, 0) < 0)
+        return (free_em(&stash, NULL));
+    line = NULL;
     buffer = malloc(BUFFER_SIZE + 1);
     if (!buffer)
         return (NULL);
-    while (1)
+    while (!check(stash))
     {
-        if (stash && check(stash))
-            return(idkwhatthefuckimdoing(&stash, &line, buffer));
-        bytesread = f_illiteracy(fd, &line, buffer, &stash);
-        if (bytesread == -1)
-            return (free(buffer), NULL);
-        if (bytesread == 0)
-            return (free(buffer), line);
-        if (check(buffer))
-            return(idkwhatthefuckimdoing(&stash, &line, buffer));
-        stash = joint(stash, buffer);
+        bytesread = read(fd, buffer, BUFFER_SIZE);
+        if (bytesread > 0)
+            buffer[bytesread] = '\0';
+        else if (bytesread == 0)
+            return (fill_line(&stash, &line, &buffer), line);
+        else if (bytesread < 0)
+            return (free_em(&stash, &buffer));
+        fill_stash(&stash, buffer);
     }
-    free(buffer);
-    buffer = NULL;
-    return (line);
-}
-
-char *get_next_line(int fd)
-{
-    char *line = NULL;
-
-    if (fd < 0 || BUFFER_SIZE <= 0 || fd > OPEN_MAX)
-        return (NULL);
-    line = fillstash(fd, line);
+    fill_line(&stash, &line, &buffer);
     return (line);
 }
 // void f()
@@ -97,7 +116,7 @@ char *get_next_line(int fd)
 // }
 // int main()
 // {
-//     //atexit(f);
+//     atexit(f);
 //     int a = open("test.txt", O_RDWR);
     
 //     char *s;
